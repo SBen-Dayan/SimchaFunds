@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SimchaFunc.Data\SimchaFund.Data.csproj" />
+    <ProjectReference Include="..\SimchaFund.Data\SimchaFund.Data.csproj" />
   </ItemGroup>
 
 </Project>

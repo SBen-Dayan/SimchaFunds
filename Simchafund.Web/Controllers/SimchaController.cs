@@ -10,11 +10,12 @@ namespace Simchafund.Web.Controllers
 
         public IActionResult Index()
         {
+            ViewBag.Message = TempData["message"] != null ? (string)TempData["message"] : null;
             return View(new SimchaViewModel
             {
                 Simchas = _manager.GetSimchas(),
                 TotalContributorCount = _manager.GetTotalContributorCount()
-            }); ;
+            }); 
         }
 
         [HttpPost]
@@ -23,6 +24,7 @@ namespace Simchafund.Web.Controllers
             if (!string.IsNullOrEmpty(simcha.Name) && simcha.Date != default)
             {
                 _manager.AddSimcha(simcha);
+                TempData["message"] = $"New simcha: {simcha.Name} added successfully!";
             }
             return Redirect("/");
         }
@@ -50,7 +52,8 @@ namespace Simchafund.Web.Controllers
         {
             contributors.RemoveAll(c => !c.Contribute);
             _manager.UpdateContributionsForSimcha(simchaId, contributors);
-            return Redirect("/Simcha");
+            TempData["message"] = "Contributions successfully updated!";
+            return Redirect("/");
         }
     }
 }

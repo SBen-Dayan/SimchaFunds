@@ -10,6 +10,7 @@ namespace Simchafund.Web.Controllers
 
         public IActionResult Index()
         {
+            ViewBag.Message = TempData["message"] != null ? (string)TempData["message"] : null;
             return View(new ContributorsViewModel
             {
                 Contributors = _manager.GetContributors(),
@@ -24,6 +25,7 @@ namespace Simchafund.Web.Controllers
             {
                 _manager.AddContributor(contributor);
                 _manager.AddDeposit(new() { ContributorId = contributor.Id, Amount = contributor.Amount, Date = DateTime.Now });
+                TempData["message"] = $"New contributor: {contributor.FirstName} {contributor.LastName} added successfully!";
             }
             return Redirect("/Contributor");
         }
@@ -33,6 +35,8 @@ namespace Simchafund.Web.Controllers
         {
             if (ValidContrInfo(contributor))
             {
+                var original = _manager.GetContributor(contributor.Id);
+                TempData["message"] = $"{original.FirstName} {original.LastName} updated successfully!";
                 _manager.UpdateContributor(contributor);
             }
             return Redirect("/contributor");
@@ -44,6 +48,8 @@ namespace Simchafund.Web.Controllers
             if (deposit.Amount != default && deposit.Date != default)
             {
                 _manager.AddDeposit(deposit);
+                var contributor = _manager.GetContributor(deposit.ContributorId);
+                TempData["message"] = $" successfull deposit for {contributor.FirstName} {contributor.LastName}";
             }
             return Redirect("/contributor");
         }
