@@ -1,0 +1,68 @@
+﻿@{
+    ViewData["Title"] = "Contribution";
+}
+@model SimchaContributionsViewModel
+
+<div class="header">
+    <h1>Contributors for the @Model.Simcha.Name simcha</h1>
+</div>
+<div class="table-responsive">
+    <form method="POST" action="/Simcha/UpdateContributions">
+        <input type="hidden" name="simchaId" value="@Model.Simcha.Id" />
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Contribute</th>
+                    <th>Name</th>
+                    <th>Balance</th>
+                    <th>Always Include</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    for (var i = 0; i < Model.Contributors.Count; i++)
+                    {
+                        var current = Model.Contributors[i];
+
+                        <tr>
+                        <input type="hidden" name="contributors[@i].Id" value="@current.Id">
+                            <td>
+                                <div class="d-flex justify-content-center">
+                                    <div class="form-check form-switch">
+                                      @if(current.Contribute || current.AlwaysInclude)
+                                        {
+                                            <input checked style="width: 4rem; height: 2rem;" name="contributors[@i].Contribute" class="form-check-input" type="checkbox" value="true">
+                                        }
+                                        else
+                                        {
+                                            <input style="width: 4rem; height: 2rem;" name="contributors[@i].Contribute" class="form-check-input" type="checkbox" value="true">
+                                        }
+                                    </div>
+                                </div>
+                            </td>
+                            <td>@($"{current.FirstName} { current.LastName}")</td>
+                            <td>@(current.Balance.ToString("c"))</td>
+                            <td>
+                                @if (current.AlwaysInclude)
+                                {
+                                <i style="font-size:30px" class="bi bi-check"></i>
+                                }
+                            </td>
+                            <td>
+                                <input data-index="@i" name="contributors[@i].Amount" value=@(current.Contribute? current.Amount.ToString("c") :"$5.00") type="text" class="form-control amount" />
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        <div style="text-align:center;">
+            <button id="update" class="btn-lg btn-danger">Update</button>
+        </div>
+    </form>
+</div>
+
+@section scripts{
+    <script src="~/js//simcha_contributions.js"></script>
+}
